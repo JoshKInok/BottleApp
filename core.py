@@ -20,7 +20,6 @@ class EmptyDatFileException(Exception):
 class EmptyDirException(Exception):
     """Exception raised when Dir contains  no images"""
 
-
 SCRIPT_DIR = sys.path[0]
 
 class FileInfo(dict):
@@ -195,6 +194,8 @@ if __name__ == "__main__":
     #logger.debug('image_dict:{0:s}'.format(image_dict))
     #logger.debug('images_and_titles:{0:s}'.format(images_and_titles))
 
+
+# added this just to see if it syncs
     bottle.debug()
     try:
         bottle.run(host='0.0.0.0', port=8889) # , quiet=True
