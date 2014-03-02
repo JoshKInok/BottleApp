@@ -196,15 +196,9 @@ if __name__ == "__main__":
         logger.warning('There will be no titles {0:s}'.format(e))
         images_and_titles = {}
 
-    # Build the list of images
-    ## image_list = mylistDir(the_dir, extensions)
-
-    # image_list = _glob(the_dir, tuple(extensions))
-
     image_list = _glob(the_dir, '.jpg', '.jpeg', '.png', '.gif')
 
     print('image_list count: {0:n}'.format(len(image_list)))
-    #image_dict = listDirectory(the_dir, extensions)
 
     if not image_list:
         pass
@@ -213,12 +207,7 @@ if __name__ == "__main__":
     print('list_dirs of {0:s}: {1:s}'.format(the_dir, list_directories(the_dir)))
     logger.info('shuffling')
     random.shuffle(image_list)
-    #logger.debug('image_list:{0:s}'.format(image_list))
-    #logger.debug('image_dict:{0:s}'.format(image_dict))
-    #logger.debug('images_and_titles:{0:s}'.format(images_and_titles))
 
-
-# added this just to see if it syncs
     bottle.debug()
     try:
         bottle.run(host='0.0.0.0', port=8889) # , quiet=True
