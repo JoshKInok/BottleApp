@@ -8,7 +8,7 @@ import pickle
 import fnmatch
 import random
 import glob
-#from os import listdir]
+#from os import listdir
 
 from bottle import template, request, static_file, redirect, post, get
 import bottle
