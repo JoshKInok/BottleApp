@@ -8,6 +8,7 @@ import pickle
 import fnmatch
 import random
 import glob
+#from os import listdir]
 
 from bottle import template, request, static_file, redirect, post, get
 import bottle
@@ -61,7 +62,16 @@ def get_favicon():
 
 
 @get('/')
+def main_page():
+    return template('main', options=list_directories(the_dir))
+
+@post('/index')
+@get('/index')
 def index():
+    page_to_use = request.POST.get('option', '')
+    print(page_to_use)
+    image_list = _glob(os.path.join(the_dir, page_to_use), '.jpg', '.jpeg', '.png', '.gif')
+    print(image_list)
     return template('index',
                     image_list=image_list,
                     images_and_titles=images_and_titles,
@@ -145,10 +155,19 @@ def _glob(path, *exts):
     path = os.path.join(path, "*") if os.path.isdir(path) else path + "*"
     return [os.path.basename(f) for files in [glob.glob(path + ext) for ext in exts] for f in files]
 
-    
+
+def list_directories(path):
+    #only_dirs = [f for f in listdir(path) if ]
+    f = []
+    for (dirpath, dirnames, filenames) in os.walk(path):
+        f.extend(dirnames)
+        break
+    return f
+
+
 if __name__ == "__main__":
     # INITIALIZE
-    #extensions = ['*.jpg', '*.jpeg', '*.png', '*.gif']
+    # extensions = ['*.jpg', '*.jpeg', '*.png', '*.gif']
     extensions = '.jpg', '.jpeg', '.png', '.gif'
     parser = init_parser()
     logger = init_logger()
@@ -179,15 +198,19 @@ if __name__ == "__main__":
 
     # Build the list of images
     ## image_list = mylistDir(the_dir, extensions)
-    #image_list = _glob(the_dir, str(extensions))
+
+    # image_list = _glob(the_dir, tuple(extensions))
+
     image_list = _glob(the_dir, '.jpg', '.jpeg', '.png', '.gif')
 
     print('image_list count: {0:n}'.format(len(image_list)))
     #image_dict = listDirectory(the_dir, extensions)
 
     if not image_list:
-        raise EmptyDirException
+        pass
+        #raise EmptyDirException
 
+    print('list_dirs of {0:s}: {1:s}'.format(the_dir, list_directories(the_dir)))
     logger.info('shuffling')
     random.shuffle(image_list)
     #logger.debug('image_list:{0:s}'.format(image_list))
