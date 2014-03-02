@@ -196,8 +196,8 @@ if __name__ == "__main__":
         logger.warning('There will be no titles {0:s}'.format(e))
         images_and_titles = {}
 
-    image_list = _glob(the_dir, '.jpg', '.jpeg', '.png', '.gif')
-
+    #image_list = _glob(the_dir, '.jpg', '.jpeg', '.png', '.gif')
+    image_list = mylistDir(the_dir, extensions)
     print('image_list count: {0:n}'.format(len(image_list)))
 
     if not image_list:
