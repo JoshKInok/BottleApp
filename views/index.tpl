@@ -1,3 +1,4 @@
+% import os
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "xhtml11.dtd">
 <html>
 <head>
@@ -46,8 +47,10 @@
         % _title = ""
     % end
 
-    <a href="/image/{{image}}" class="highslide" onclick="return hs.expand(this)">
-	    <img src="/static/img/loader.gif" data-src="/thumbs/{{image}}" alt="Highslide JS"
+    % image_path = os.path.join('image',root_dir,image)
+    % thumb_path = os.path.join('image',root_dir,'thumbs',image)
+    <a href="{{image_path}}" class="highslide" onclick="return hs.expand(this)">
+	    <img src="/static/img/loader.gif" data-src="{{thumb_path}}" alt="Highslide JS"
 		    title="Click to enlarge"/>
     </a>
 

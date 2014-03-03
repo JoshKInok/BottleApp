@@ -8,7 +8,6 @@ import pickle
 import fnmatch
 import random
 import glob
-#from os import listdir
 
 from bottle import template, request, static_file, redirect, post, get
 import bottle
@@ -22,17 +21,6 @@ class EmptyDirException(Exception):
     """Exception raised when Dir contains  no images"""
 
 SCRIPT_DIR = sys.path[0]
-
-class FileInfo(dict):
-    "store file metadata"
-
-    def __init__(self, filename=None):
-        _filename = os.path.basename(filename)
-        try:
-            _title = images_and_titles[_filename]
-        except:
-            _title = "No Title"
-        self[_filename] = _title
 
 
 # STATIC ROUTES
@@ -68,11 +56,13 @@ def main_page():
 @post('/index')
 @get('/index')
 def index():
-    page_to_use = request.POST.get('option', '')
-    print(page_to_use)
-    image_list = _glob(os.path.join(the_dir, page_to_use), '.jpg', '.jpeg', '.png', '.gif')
-    print(image_list)
+    page_to_use = request.POST.get('selector')
+    print('will use {0:s}'.format(page_to_use))
+    new_dir = os.path.join(the_dir,page_to_use)
+    image_list = mylistDir(new_dir, extensions)
+    #image_list = _glob(os.path.join(the_dir, page_to_use), '.jpg', '.jpeg', '.png', '.gif')
     return template('index',
+                    root_dir=page_to_use,
                     image_list=image_list,
                     images_and_titles=images_and_titles,
                     page_title=os.path.basename(the_dir)
@@ -128,47 +118,29 @@ def listDirectory(directory, fileExtList):
     return [getFileInfoClass(f)(f) for f in fileList]
 
 
+def is_image_file(filename, extensions=['.jpg', '.jpeg', '.gif', '.png']):
+    return any(filename.endswith(e) for e in extensions)
+
+
 def mylistDir(directory, fileExtList):
     matches = []
     for root, dirnames, filenames in os.walk(directory):
-        for extensions in fileExtList:
-            for filename in fnmatch.filter(filenames, extensions):
-                matches.append(filename)
+        for filename in filter(is_image_file, filenames):
+            matches.append(filename)
     return matches
-
-def _glob(path, *exts):
-    """Glob for multiple file extensions
-
-    Parameters
-    ----------
-    path : str
-        A file name without extension, or directory name
-    exts : tuple
-        File extensions to glob for
-
-    Returns
-    -------
-    files : list
-        list of files matching extensions in exts in path
-
-    """
-    path = os.path.join(path, "*") if os.path.isdir(path) else path + "*"
-    return [os.path.basename(f) for files in [glob.glob(path + ext) for ext in exts] for f in files]
 
 
 def list_directories(path):
-    #only_dirs = [f for f in listdir(path) if ]
     f = []
     for (dirpath, dirnames, filenames) in os.walk(path):
         f.extend(dirnames)
         break
-    return f
+    return sorted(f, key=str.lower)
 
 
 if __name__ == "__main__":
     # INITIALIZE
-    # extensions = ['*.jpg', '*.jpeg', '*.png', '*.gif']
-    extensions = '.jpg', '.jpeg', '.png', '.gif'
+    extensions = ['*.jpg', '*.jpeg', '*.png', '*.gif']
     parser = init_parser()
     logger = init_logger()
 
@@ -195,18 +167,6 @@ if __name__ == "__main__":
     except Exception as e:
         logger.warning('There will be no titles {0:s}'.format(e))
         images_and_titles = {}
-
-    #image_list = _glob(the_dir, '.jpg', '.jpeg', '.png', '.gif')
-    image_list = mylistDir(the_dir, extensions)
-    print('image_list count: {0:n}'.format(len(image_list)))
-
-    if not image_list:
-        pass
-        #raise EmptyDirException
-
-    print('list_dirs of {0:s}: {1:s}'.format(the_dir, list_directories(the_dir)))
-    logger.info('shuffling')
-    random.shuffle(image_list)
 
     bottle.debug()
     try:
